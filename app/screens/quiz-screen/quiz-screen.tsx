@@ -13,6 +13,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from "react-native"
 import { Icon } from "../../components/icon/icon"
 import LinearGradient from "react-native-linear-gradient"
@@ -119,7 +120,19 @@ export const QuizScreen: React.FunctionComponent<{}> = observer(() => {
   const [question, setQuestion] = React.useState<string>("")
   const [answerButtons, setAnswerButtons] = React.useState([])
   const [isCheck, setCheck] = React.useState<boolean>(false)
+  const [isAnimationCheck, setAnimationCheck] = React.useState<boolean>(false)
   const [selectedIndex, setSelectedIndex] = React.useState<number>(-1)
+
+  const animation = () => {
+    const opacity = new Animated.Value(0)
+
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 500,
+    }).start()
+
+    return opacity
+  }
 
   const getOption = (index: number) => options[index]
 
@@ -131,6 +144,7 @@ export const QuizScreen: React.FunctionComponent<{}> = observer(() => {
 
   const setCorrectOption = (index: number) => {
     setCheck(true)
+    setAnimationCheck(true)
     setSelectedIndex(index)
   }
 
@@ -176,7 +190,10 @@ export const QuizScreen: React.FunctionComponent<{}> = observer(() => {
           style={QUESTIONINPUT}
           placeholder={"Tap to begin typing your \nquestion"}
           placeholderTextColor="#FFFFFF"
-          onChangeText={text => setQuestion(text)}
+          onChangeText={text => {
+            setAnimationCheck(false)
+            setQuestion(text)
+          }}
           value={question}
           multiline={true}
           numberOfLines={2}
@@ -193,7 +210,7 @@ export const QuizScreen: React.FunctionComponent<{}> = observer(() => {
                 marginBottom: 20,
               }}
             >
-              <View
+              <Animated.View
                 style={{
                   backgroundColor: isCheck && index === selectedIndex ? "#36C759" : "transparent",
                   flexDirection: "row",
@@ -205,6 +222,7 @@ export const QuizScreen: React.FunctionComponent<{}> = observer(() => {
                   borderColor: isCheck && index === selectedIndex ? "#36C759" : "#fff",
                   justifyContent: "flex-start",
                   alignItems: "center",
+                  opacity: isCheck && index === selectedIndex && isAnimationCheck ? animation() : 1,
                 }}
               >
                 <View style={OPTIONVIEWSTYLE}>
@@ -236,15 +254,15 @@ export const QuizScreen: React.FunctionComponent<{}> = observer(() => {
                   }}
                   onChangeText={text => changeAnswer(index, text)}
                 />
-              </View>
+              </Animated.View>
             </TouchableOpacity>
           )
         })}
         {answerButtons.length < 4 ? (
           <TouchableOpacity
             onPress={() => {
+              setAnimationCheck(false)
               setAnswerButtons([...answerButtons, { answer: "" }])
-              console.log(answerButtons)
             }}
             style={{
               justifyContent: "center",
