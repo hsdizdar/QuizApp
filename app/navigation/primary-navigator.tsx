@@ -1,6 +1,6 @@
 import React from "react"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { WelcomeScreen, DemoScreen } from "../screens"
+import { WelcomeScreen } from "../screens"
 import { PrimaryParamList } from "./types"
 
 const Stack = createNativeStackNavigator<PrimaryParamList>()
@@ -14,7 +14,6 @@ export function PrimaryNavigator() {
       }}
     >
       <Stack.Screen name="welcome" component={WelcomeScreen} />
-      <Stack.Screen name="demo" component={DemoScreen} />
     </Stack.Navigator>
   )
 }
